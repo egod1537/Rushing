@@ -4,7 +4,7 @@
 
 ---
 
-<img src="imgs/1.png  width="600" height="1066"/>
+<img src="imgs/1.png" width="600" height="1066"/>
 
 ## 📄 Introduction
 
