@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1d0c5620c82d6448f43824fea5e0aa, type: 3}
+  m_Name: Monster_1
+  m_EditorClassIdentifier: 
+  bg:
+  - {fileID: 8994901421030151390, guid: 13a3e8fcf4aa39f42aa076e88b90edb6, type: 3}
+  tiles:
+    keys: 0100000002000000030000000400000005000000
+    values:
+    - array:
+      - go: {fileID: 121353236453258748, guid: e59f0c09d5ffc09478f62a978ace211d, type: 3}
+        size: {x: 1, y: 1}
+        percent: 0
+    - array:
+      - go: {fileID: 1647752433413786715, guid: 478602c044b3b1341b7bddfb6059802e, type: 3}
+        size: {x: 1, y: 1}
+        percent: 1
+    - array:
+      - go: {fileID: 7910275866855995907, guid: 7fc9020db60e97d41a79c37d9155dfb9, type: 3}
+        size: {x: 1, y: 1}
+        percent: 0
+    - array:
+      - go: {fileID: 2853449526699737090, guid: 6520316b9c88b374e966be737a471d2f, type: 3}
+        size: {x: 1, y: 1}
+        percent: 1
+    - array:
+      - go: {fileID: 5672969339642699353, guid: 02fb8b58d18adff419b0a4bde270facf, type: 3}
+        size: {x: 1, y: 1}
+        percent: 1
