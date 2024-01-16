@@ -8,19 +8,17 @@ using System.Threading.Tasks;
 using UnityEngine;
 public class MapGenerator
 {
-    public Dictionary<Vector2Int,GameObject>
-        GenerateMapObject(MapResourceTable table, SOMapTheme theme, 
-        Dictionary<Vector2Int, MapObjectType> layout)
-    {
-        int n = table.n;
-        Dictionary<Vector2Int, GameObject> map = new Dictionary<Vector2Int, GameObject>();
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                map.Add(new Vector2Int(i, j), theme.rand(layout[new Vector2Int(i, j)]).go);
-        return map;
-    }
+    /// <summary>
+    /// 맵의 모든 것을 생성하는 함수
+    /// </summary>
+    /// <param name="nk"> 반복하는 횟수 </param>
+    /// <param name="table"> 맵 오브젝트 생성 정보 테이블 </param>
+    /// <param name="progress"> 맵 생성 진행도 (비동기) </param>
+    /// <returns> 시작 위치와 해결 방법, 생성한 맵 레이아웃을 반환한다. </returns>
     public (Vector2Int start, string path, Dictionary<Vector2Int, MapObjectType>) GenerateMap(
-        int nk, MapResourceTable table, ref float progress)
+                                                                                  int nk, 
+                                                                                  MapResourceTable table, 
+                                                                                  ref float progress)
     {
         table.Normalize();
         int n = table.n;
@@ -31,6 +29,7 @@ public class MapGenerator
         MT19937 mt = new MT19937();
         int treasure = table.treasureCount;
 
+        //일정 횟수 반복 or 모든 보석 개수 생성될 때 까지
         for (int k = 0; k < nk || table.treasureCount==treasure; k++)
         {
             Vector2Int pos = new Vector2Int(mt.RandomRange(0, n - 1), mt.RandomRange(0, n - 1));
@@ -54,12 +53,20 @@ public class MapGenerator
             for (int j = 0; j < n; j++) map.Add(new Vector2Int(i, j), lt_map[i][j]);
 
         Vector2Int start = FindMapStart(lt_map, true)[0];
-        MapTracker tracker = new MapTracker(n,n,start,lt_map);
 
+        //맵 추적하는 클래스
+        MapTracker tracker = new MapTracker(n,n,start,lt_map);
         return (start, tracker.Track(tracker.Solve()), map); 
     }
     public bool CheckMap(List<List<MapObjectType>> map, bool opt=false)
         => FindMapStart(map, opt).Count > 0;
+
+    /// <summary>
+    /// 맵에서 클리어할 수 있는 시작 위치 찾는 함수
+    /// </summary>
+    /// <param name="map"></param>
+    /// <param name="opt"></param>
+    /// <returns></returns>
     public List<Vector2Int> FindMapStart(List<List<MapObjectType>> map, bool opt=false)
     {
         int n = map.Count;
@@ -77,12 +84,27 @@ public class MapGenerator
             }
         return ans;
     }
+
+    /// <summary>
+    /// (sx, sy)에서 시작해도 클리어 가능한 지 여부를 확인하는 함수
+    /// </summary>
+    /// <param name="sx"> 시작 위치 x </param>
+    /// <param name="sy"> 시작 위치 y </param>
+    /// <param name="map"> 맵 정보 </param>
+    /// <returns></returns>
     public bool CheckMapStart(int sx, int sy, List<List<MapObjectType>> map)
     {
         int n = map.Count;
         MapSolver solver = new MapSolver(n, n, sx, sy, map);
         return solver.Check();
     }
+
+    /// <summary>
+    /// 맵 정보를 맵 레이아웃 생성기에 알맞는 포맷으로 변환하는 함수
+    /// </summary>
+    /// <param name="n"> 맵의 크기 </param>
+    /// <param name="dic"> 맵의 정보 </param>
+    /// <returns></returns>
     public List<List<MapObjectType>> ConvertMap(int n, Dictionary<Vector2Int, MapObjectType> dic)
     {
         List<List<MapObjectType>> ans = new List<List<MapObjectType>>();
@@ -90,6 +112,34 @@ public class MapGenerator
         foreach (var p in dic) ans[p.Key.x][p.Key.y] = p.Value;
         return ans;
     }
+
+    /// <summary>
+    /// 레이아웃을 기반으로 실제 GameObject 생성하는 함수
+    /// </summary>
+    /// <param name="table"> 맵 오브젝트 생성 정보 테이블 </param>
+    /// <param name="theme"> 테마 정보 </param>
+    /// <param name="layout"> 맵 레이아웃 </param>
+    /// <returns></returns>
+    public Dictionary<Vector2Int, GameObject> GenerateMapObject(
+                                              MapResourceTable table,
+                                              SOMapTheme theme,
+                                              Dictionary<Vector2Int, MapObjectType> layout)
+    {
+        int n = table.n;
+        Dictionary<Vector2Int, GameObject> map = new Dictionary<Vector2Int, GameObject>();
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                map.Add(new Vector2Int(i, j), theme.rand(layout[new Vector2Int(i, j)]).go);
+        return map;
+    }
+
+    /// <summary>
+    /// 생성된 맵에 무작위로 Entity 생성하는 함수
+    /// </summary>
+    /// <param name="table"> 맵 오브젝트 생성 정보 테이블 </param>
+    /// <param name="layout"> 맵의 레이아웃 </param>
+    /// <param name="monster"> 몬스터 정보 </param>
+    /// <returns></returns>
     public Dictionary<Vector2Int, MapEntity> GenerateEntity(
         MapResourceTable table, Dictionary<Vector2Int, MapObjectType> layout,
         SOMapMonster monster)

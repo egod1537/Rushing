@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Tarjan 알고리즘을 사용하여 SCC를 구하는 클래스
+/// </summary>
 public class SCC : Graph
 {
     public int sccCount;

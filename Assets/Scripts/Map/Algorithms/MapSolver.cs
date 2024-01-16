@@ -63,6 +63,10 @@ public class MapSolver
     protected List<List<int>>[] dp;
     protected int[] dx = { 1, 0, -1, 0 };
     protected int[] dy = { 0, 1, 0, -1 };
+
+    /// <summary>
+    /// Tilt Maze 맵을 그래프로 표현하기 위해 DP를 사용하여 필요한 정보 전처리하는 함수
+    /// </summary>
     private void FillDP()
     {
         dp = new List<List<int>>[4];
@@ -106,6 +110,9 @@ public class MapSolver
     }
 
     protected SCC scc;
+    /// <summary>
+    /// SCC 만드는 함수
+    /// </summary>
     private void ConstructSCC()
     {
         scc = new SCC(idx + 1);
@@ -120,6 +127,11 @@ public class MapSolver
     }
     protected int SCCGroup(int g) => scc.group[g];
     protected int SCCGroup(int x, int y) => SCCGroup(num[x][y]);
+
+    /// <summary>
+    /// SCC로 압축된 그래프에서 2-SAT의 해를 찾는 과정
+    /// </summary>
+    /// <returns> 각 변수의 값, 실패하는 경우 -1이 포함된다. </returns>
     public List<int> Solve()
     {
         FillDP();
@@ -166,6 +178,13 @@ public class MapSolver
         return ret[0] != -1;
     }
 
+    /// <summary>
+    /// 맵 레이아웃을 다루기 편한 형태로 변환하는 함수
+    /// </summary>
+    /// <param name="sx"> 시작 위치 x </param>
+    /// <param name="sy"> 시작 위치 y </param>
+    /// <param name="map"> 맵 레이아웃 </param>
+    /// <returns></returns>
     public List<string> ConvertMap(int sx, int sy, List<List<MapObjectType>> map)
     {
         int n = map.Count;

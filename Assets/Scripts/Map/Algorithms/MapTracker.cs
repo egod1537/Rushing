@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+/// <summary>
+/// 주어진 맵의 해결 방법을 찾는 클래스
+/// </summary>
 public class MapTracker : MapSolver
 {
     public MapTracker(int _n, int _m) : base(_n, _m)
@@ -33,11 +36,17 @@ public class MapTracker : MapSolver
         return ' ';
     }
 
+    /// <summary>
+    /// SCC로 압축된 그래프에서 경로를 찾는 함수
+    /// </summary>
+    /// <param name="ret"> 방문해야하는 정점의 순서 </param>
+    /// <returns></returns>
     public List<int> FindRoute(List<int> ret)
     {
         int sz = ret.Count, cnt = 0;
         List<int> ind = new List<int>();
         ind.Resize(sz, 0);
+
         Graph compress = scc.Compress();
         for (int i = 0; i < sz; i++)
             foreach (int j in compress.E[i]) ind[j]++;
@@ -51,9 +60,11 @@ public class MapTracker : MapSolver
         List<int> lv = new List<int>();
         lv.Resize(sz, -1);
 
+        //위상 정렬로 탐색 순서 정하기
         Queue<int> q = new Queue<int>();
         for (int i = 0; i < sz; i++)
             if (ind[i] == 0) q.Enqueue(i);
+
         while (q.Count > 0)
         {
             int top = q.Dequeue();
@@ -62,6 +73,7 @@ public class MapTracker : MapSolver
                 if (--ind[v] == 0) q.Enqueue(v);
         }
 
+        //BFS 돌면서 최단 경로 찾기
         ind = new List<int>(temp);
         List<int> dp = new List<int>();
         List<int> prv = new List<int>();
@@ -88,6 +100,8 @@ public class MapTracker : MapSolver
                 if (--ind[v] == 0) q.Enqueue(v);
             }
         }
+
+        //구체적인 경로 찾기
         List<int> route = new List<int>();
         for (int i = 0; i < sz; i++)
         {
@@ -104,6 +118,12 @@ public class MapTracker : MapSolver
         route.Reverse();
         return route;
     }
+
+    /// <summary>
+    /// 방문해야하는 정점의 순서는 상하좌우으로 변환하는 함수.
+    /// </summary>
+    /// <param name="ret"></param>
+    /// <returns></returns>
     public string Track(List<int> ret)
     {
         List<int> route = FindRoute(ret);
@@ -117,8 +137,17 @@ public class MapTracker : MapSolver
         return Routing(route, dst, path);
     }
 
-    private void DstInSCC(int sc, List<int> route,
-        List<List<int>> dst, List<List<string>> path)
+    /// <summary>
+    /// SCC의 정점에서 모든 보석을 먹는 최단 경로를 찾는 함수
+    /// </summary>
+    /// <param name="sc"> SCC 정점의 번호 </param>
+    /// <param name="route"></param>
+    /// <param name="dst"></param>
+    /// <param name="path"></param>
+    private void DstInSCC(int sc, 
+                          List<int> route,
+                          List<List<int>> dst, 
+                          List<List<string>> path)
     {
         Dictionary<int, int> id = new Dictionary<int, int>();
         List<int> g = scc.scc[sc];
@@ -204,6 +233,13 @@ public class MapTracker : MapSolver
         return ans;
     }
 
+    /// <summary>
+    /// 맵의 클리어 가능한 경로를 찾는 함수
+    /// </summary>
+    /// <param name="route"></param>
+    /// <param name="dst"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
     private string Routing(List<int> route, List<List<int>> dst, List<List<string>> path)
     {
         List<int> lv = new List<int>();
@@ -272,6 +308,8 @@ public class MapTracker : MapSolver
                     }
                 }
         }
+
+
         int ans = 1 << 30;
         foreach (int var in dp[1][sz - 1]) ans = Math.Min(ans, var);
         List<string> ro = new List<string>();
